@@ -1,0 +1,642 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Jiulong Lin — Portfolio</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+  <script type="text/babel" src="tweaks-panel.jsx"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body, #root { width: 100%; height: 100%; overflow: hidden; }
+    body { font-family: 'DM Sans', sans-serif; background: var(--c-bg); color: var(--c-text); }
+
+    :root {
+      --c-bg: #f7f6f2;
+      --c-surface: #ffffff;
+      --c-border: #e6e5e1;
+      --c-text: #111111;
+      --c-text-2: #666666;
+      --c-text-3: #aaaaaa;
+      --c-accent: #0d6b4c;
+      --c-accent-dim: #e4f0eb;
+      --c-accent-text: #0d6b4c;
+      --sidebar-w: 260px;
+      --nav-h: 52px;
+    }
+
+    ::-webkit-scrollbar { width: 4px; height: 4px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: var(--c-border); border-radius: 2px; }
+
+    a { color: inherit; text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    .nav {
+      position: fixed; top: 0; left: 0; right: 0; height: var(--nav-h);
+      background: var(--c-surface); border-bottom: 1.5px solid var(--c-border);
+      display: flex; align-items: center; padding: 0 28px;
+      z-index: 100;
+    }
+    .nav-name {
+      font-family: 'Syne', sans-serif; font-size: 18px; font-weight: 800;
+      color: var(--c-text); letter-spacing: -0.02em; flex: 1;
+    }
+    .nav-links { display: flex; align-items: center; gap: 28px; }
+    .nav-link {
+      font-family: 'Space Mono', monospace; font-size: 11px;
+      color: var(--c-text-3); cursor: pointer; transition: color 0.15s;
+    }
+    .nav-link:hover { color: var(--c-text); }
+    .nav-resume {
+      font-family: 'Space Mono', monospace; font-size: 10px;
+      color: var(--c-accent); border: 1.5px solid var(--c-accent);
+      padding: 5px 12px; border-radius: 3px; cursor: pointer;
+      transition: background 0.15s, color 0.15s;
+    }
+    .nav-resume:hover { background: var(--c-accent); color: #fff; }
+
+    .layout {
+      position: fixed; top: var(--nav-h); left: 0; right: 0; bottom: 0;
+      display: flex;
+    }
+
+    /* ── Sidebar ── */
+    .sidebar {
+      width: var(--sidebar-w); flex-shrink: 0;
+      background: var(--c-surface); border-right: 1.5px solid var(--c-border);
+      display: flex; flex-direction: column; overflow: hidden;
+    }
+    .sidebar-scroll { flex: 1; overflow-y: auto; }
+    .sidebar-section-label {
+      font-family: 'Space Mono', monospace; font-size: 9px; font-weight: 700;
+      color: var(--c-text-3); letter-spacing: 0.12em;
+      padding: 14px 18px 8px; display: block;
+    }
+    .proj-item {
+      display: flex; flex-direction: column; gap: 2px;
+      padding: 10px 18px; cursor: pointer;
+      border-left: 3px solid transparent;
+      border-bottom: 1px solid var(--c-border);
+      transition: background 0.12s, border-color 0.12s;
+    }
+    .proj-item:hover { background: var(--c-bg); }
+    .proj-item.active {
+      background: var(--c-accent-dim);
+      border-left-color: var(--c-accent);
+    }
+    .proj-item-title {
+      font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 500;
+      color: var(--c-text);
+    }
+    .proj-item.active .proj-item-title { color: var(--c-accent-text); }
+    .proj-item-meta {
+      font-family: 'Space Mono', monospace; font-size: 9px; color: var(--c-text-3);
+    }
+
+    .exp-item {
+      padding: 7px 18px; border-bottom: 1px solid var(--c-border);
+    }
+    .exp-company {
+      font-family: 'Space Mono', monospace; font-size: 9px; font-weight: 700;
+      color: var(--c-text-2);
+    }
+    .exp-role {
+      font-family: 'DM Sans', sans-serif; font-size: 11px; color: var(--c-text-3);
+      margin-top: 1px;
+    }
+    .exp-dates {
+      font-family: 'Space Mono', monospace; font-size: 8px; color: var(--c-text-3);
+    }
+
+    .skills-area { padding: 10px 18px 18px; }
+    .skills-grid { display: flex; flex-wrap: wrap; gap: 4px; }
+    .skill-chip {
+      font-family: 'Space Mono', monospace; font-size: 8px;
+      color: var(--c-text-2); background: var(--c-bg);
+      border: 1px solid var(--c-border); padding: 2px 7px; border-radius: 2px;
+    }
+
+    /* ── Right panel ── */
+    .panel {
+      flex: 1; overflow-y: auto;
+      background: var(--c-bg); padding: 40px 48px;
+    }
+
+    /* Hero / About state */
+    .hero-name {
+      font-family: 'Syne', sans-serif; font-size: 52px; font-weight: 800;
+      line-height: 1; letter-spacing: -0.03em; color: var(--c-text);
+    }
+    .hero-title {
+      font-family: 'Space Mono', monospace; font-size: 11px;
+      color: var(--c-accent); margin-top: 10px; letter-spacing: 0.04em;
+    }
+    .hero-bio {
+      font-family: 'DM Sans', sans-serif; font-size: 15px; line-height: 1.65;
+      color: var(--c-text-2); margin-top: 16px; max-width: 520px;
+    }
+    .hero-links { display: flex; gap: 10px; margin-top: 22px; flex-wrap: wrap; }
+    .hero-btn {
+      font-family: 'Space Mono', monospace; font-size: 10px;
+      color: var(--c-text); border: 1.5px solid var(--c-border);
+      padding: 6px 14px; border-radius: 3px; cursor: pointer;
+      transition: border-color 0.15s, color 0.15s;
+      display: inline-block;
+    }
+    .hero-btn:hover { border-color: var(--c-accent); color: var(--c-accent); text-decoration: none; }
+    .hero-btn.primary {
+      background: var(--c-text); color: #fff; border-color: var(--c-text);
+    }
+    .hero-btn.primary:hover { background: var(--c-accent); border-color: var(--c-accent); color: #fff; }
+
+    .section-divider { border: none; border-top: 1.5px solid var(--c-border); margin: 32px 0; }
+
+    /* Project detail */
+    .pd-tag {
+      font-family: 'Space Mono', monospace; font-size: 9px; font-weight: 700;
+      color: var(--c-accent); letter-spacing: 0.1em;
+    }
+    .pd-title {
+      font-family: 'Syne', sans-serif; font-size: 36px; font-weight: 800;
+      color: var(--c-text); line-height: 1.1; letter-spacing: -0.02em; margin-top: 6px;
+    }
+    .pd-tagline {
+      font-family: 'DM Sans', sans-serif; font-size: 15px; color: var(--c-text-2);
+      margin-top: 6px; line-height: 1.5;
+    }
+    .pd-action-row { display: flex; gap: 8px; margin-top: 16px; flex-wrap: wrap; }
+    .pd-btn {
+      font-family: 'Space Mono', monospace; font-size: 10px;
+      padding: 7px 16px; border-radius: 3px; cursor: pointer;
+      border: 1.5px solid var(--c-border); color: var(--c-text-2);
+      transition: all 0.15s; display: inline-block;
+    }
+    .pd-btn:hover { border-color: var(--c-accent); color: var(--c-accent); text-decoration: none; }
+    .pd-btn.filled {
+      background: var(--c-accent); border-color: var(--c-accent); color: #fff;
+    }
+    .pd-btn.filled:hover { opacity: 0.85; text-decoration: none; }
+
+    .screenshot-box {
+      width: 100%; margin: 24px 0;
+      border-radius: 6px; overflow: hidden;
+      border: 1.5px solid var(--c-border);
+      background: var(--c-surface);
+      position: relative;
+    }
+    .screenshot-inner {
+      width: 100%; aspect-ratio: 16/9;
+      background: repeating-linear-gradient(
+        45deg, #ebebeb 0px, #ebebeb 1px, transparent 1px, transparent 10px
+      );
+      display: flex; align-items: center; justify-content: center;
+    }
+    .screenshot-label {
+      font-family: 'Space Mono', monospace; font-size: 10px; color: #bbb;
+      background: var(--c-surface); padding: 4px 10px; border-radius: 2px;
+    }
+
+    .pd-section-title {
+      font-family: 'Space Mono', monospace; font-size: 9px; font-weight: 700;
+      color: var(--c-text-3); letter-spacing: 0.12em; margin-bottom: 10px;
+    }
+
+    .pd-block { font-size: 14px; line-height: 1.7; color: var(--c-text-2); }
+
+    .highlights-list { display: flex; flex-direction: column; gap: 8px; }
+    .highlight-item { display: flex; gap: 10px; align-items: flex-start; }
+    .highlight-dot {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: var(--c-accent); flex-shrink: 0; margin-top: 7px;
+    }
+    .highlight-text {
+      font-family: 'DM Sans', sans-serif; font-size: 14px;
+      color: var(--c-text-2); line-height: 1.6;
+    }
+
+    .stack-row { display: flex; flex-wrap: wrap; gap: 6px; }
+    .stack-chip {
+      font-family: 'Space Mono', monospace; font-size: 10px;
+      color: var(--c-text-2); background: var(--c-surface);
+      border: 1px solid var(--c-border); padding: 3px 9px; border-radius: 2px;
+    }
+
+    .thumb-grid { display: flex; gap: 12px; margin-top: 16px; }
+    .thumb-box {
+      flex: 1; aspect-ratio: 4/3; border-radius: 4px; overflow: hidden;
+      border: 1.5px solid var(--c-border);
+      background: repeating-linear-gradient(
+        -45deg, #ebebeb 0px, #ebebeb 1px, transparent 1px, transparent 10px
+      );
+      display: flex; align-items: center; justify-content: center;
+    }
+    .thumb-label {
+      font-family: 'Space Mono', monospace; font-size: 8px; color: #ccc;
+    }
+
+    .exp-full-item {
+      display: flex; justify-content: space-between; align-items: flex-start;
+      padding: 14px 0; border-bottom: 1px solid var(--c-border);
+      gap: 12px;
+    }
+    .exp-full-company {
+      font-family: 'Space Mono', monospace; font-size: 11px; font-weight: 700;
+      color: var(--c-text);
+    }
+    .exp-full-role {
+      font-family: 'DM Sans', sans-serif; font-size: 14px; color: var(--c-text-2);
+      margin-top: 2px;
+    }
+    .exp-full-tags { display: flex; gap: 4px; flex-wrap: wrap; margin-top: 6px; }
+    .exp-full-tag {
+      font-family: 'Space Mono', monospace; font-size: 8px; color: var(--c-text-3);
+      background: var(--c-bg); border: 1px solid var(--c-border);
+      padding: 2px 6px; border-radius: 2px;
+    }
+    .exp-full-dates {
+      font-family: 'Space Mono', monospace; font-size: 9px; color: var(--c-text-3);
+      white-space: nowrap; flex-shrink: 0;
+    }
+
+    /* Transitions */
+    .panel-content { animation: fadeIn 0.2s ease; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+
+    /* Responsive sidebar collapse */
+    @media (max-width: 700px) {
+      :root { --sidebar-w: 200px; }
+      .panel { padding: 24px 20px; }
+      .hero-name { font-size: 36px; }
+    }
+  </style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+
+const { TweaksPanel, TweakSection, TweakToggle, TweakColor, TweakRadio, useTweaks } = window;
+
+/* ──────────────────────────────────────────────────
+   DATA
+────────────────────────────────────────────────── */
+
+const PROFILE = {
+  name: 'Jiulong Lin',
+  title: 'SENIOR FRONTEND-FOCUSED FULL-STACK ENGINEER',
+  location: 'Cupertino, CA',
+  email: 'longgangsima@gmail.com',
+  linkedin: 'https://www.linkedin.com/in/jl-lin-199bb12a/',
+  github: 'https://github.com/longgangsima',
+  bio: '5 years building real-time, data-intensive web applications at Walmart and Sam\'s Club. Strong in React, TypeScript, GraphQL, and backend API design — with a focus on end-to-end system design, data consistency, and real-time synchronization.',
+};
+
+const PROJECTS = [
+  {
+    id: 'ai-coach',
+    title: 'AI Live Coach',
+    tagline: 'Real-time AI coaching with live speech analysis and instant, personalized feedback.',
+    tag: 'AI · Full-stack',
+    year: '2024',
+    stack: ['React', 'Node.js', 'OpenAI API', 'WebSocket', 'PostgreSQL', 'Python'],
+    problem: 'Coaching sessions are expensive and provide delayed feedback — by the time you receive notes, the moment has passed and the habit has formed.',
+    solution: 'A real-time AI coaching platform that analyzes speech, pacing, and content quality as you present — delivering instant, actionable suggestions so you can improve in the moment.',
+    highlights: [
+      'Sub-200ms feedback latency via WebSocket streaming and server-sent events',
+      'Personalized session memory — tracks progress and adapts suggestions over time',
+      'Integrated OpenAI Whisper for real-time transcription + GPT-4 for contextual coaching',
+    ],
+    links: { demo: '#', github: 'https://github.com/longgangsima', video: null },
+    placeholder: true,
+  },
+  {
+    id: 'sys-mgmt',
+    title: 'System Management Dashboard',
+    tagline: 'Unified real-time monitoring and control for distributed multi-service systems.',
+    tag: 'Full-stack · DevTools',
+    year: '2023',
+    stack: ['React', 'TypeScript', 'GraphQL', 'Node.js', 'Redis', 'PostgreSQL'],
+    problem: 'Managing multiple interconnected services requires jumping between tools, losing context and slowing incident response time.',
+    solution: 'A single-pane dashboard aggregating metrics, traces, and configuration across services — with live alerts, dependency graphs, and one-click actions.',
+    highlights: [
+      'Real-time GraphQL subscriptions delivering live metric updates across 20+ services',
+      'Configurable alert rules with escalation policies and on-call notification routing',
+      'Interactive service dependency graph with health status and latency heatmap',
+    ],
+    links: { demo: '#', github: 'https://github.com/longgangsima', video: null },
+    placeholder: true,
+  },
+  {
+    id: 'project-3',
+    title: 'Your Next Project',
+    tagline: 'Add your third personal project here — a description of what it does and why it matters.',
+    tag: 'Coming soon',
+    year: '2025',
+    stack: ['Your', 'Tech', 'Stack'],
+    problem: 'Describe the problem this project solves.',
+    solution: 'Describe how you solved it and what makes it technically interesting.',
+    highlights: [
+      'Key technical decision or achievement',
+      'Metric or measurable impact',
+      'An interesting problem you solved',
+    ],
+    links: { demo: null, github: null, video: null },
+    placeholder: true,
+  },
+];
+
+const EXPERIENCE = [
+  { company: 'Walmart — Compass', role: 'Frontend / Full-Stack Engineer', dates: 'Mar 2025–Present', tags: ['Node.js','TypeScript','Playwright','Kafka'] },
+  { company: "Sam's Club — Ad Center", role: 'Frontend / Full-Stack Engineer', dates: 'Sep 2024–Jan 2025', tags: ['React','GraphQL','CI/CD'] },
+  { company: "Sam's Club — AdPal", role: 'Frontend / Full-Stack Engineer', dates: 'Mar 2023–Sep 2024', tags: ['Apollo','Django','WebSocket','PostgreSQL'] },
+  { company: "Sam's Club — Opus CMS", role: 'Frontend Engineer', dates: 'Mar 2022–Mar 2023', tags: ['React','CMS','RBAC','WYSIWYG'] },
+  { company: 'Walmart — Global Experience', role: 'Frontend Engineer', dates: 'Mar 2021–Mar 2022', tags: ['Micro-frontend','WCAG 2.1','Playwright'] },
+];
+
+const SKILLS = ['React 18','TypeScript','Next.js','GraphQL','Node.js','Python','Django','PostgreSQL','TanStack Query','Apollo Client','Playwright','Jest','Tailwind CSS','Jenkins','GitHub Actions'];
+
+/* ──────────────────────────────────────────────────
+   COMPONENTS
+────────────────────────────────────────────────── */
+
+function Screenshot({ label = 'project screenshot' }) {
+  return (
+    <div className="screenshot-box">
+      <div className="screenshot-inner">
+        <span className="screenshot-label">[ {label} ]</span>
+      </div>
+    </div>
+  );
+}
+
+function Thumb({ label }) {
+  return (
+    <div className="thumb-box">
+      <span className="thumb-label">{label}</span>
+    </div>
+  );
+}
+
+/* ── Nav ── */
+function Nav({ onAbout }) {
+  return (
+    <nav className="nav">
+      <span className="nav-name" style={{ cursor: 'pointer' }} onClick={onAbout}>
+        Jiulong Lin
+      </span>
+      <div className="nav-links">
+        <span className="nav-link" onClick={onAbout}>about</span>
+        <a className="nav-link" href="mailto:longgangsima@gmail.com">contact</a>
+        <a className="nav-link" href={PROFILE.linkedin} target="_blank" rel="noreferrer">linkedin ↗</a>
+        <a className="nav-link" href={PROFILE.github} target="_blank" rel="noreferrer">github ↗</a>
+        <span className="nav-resume">resume ↓</span>
+      </div>
+    </nav>
+  );
+}
+
+/* ── Sidebar ── */
+function Sidebar({ active, setActive }) {
+  return (
+    <aside className="sidebar">
+      <div className="sidebar-scroll">
+        <span className="sidebar-section-label">PROJECTS</span>
+        {PROJECTS.map((p, i) => (
+          <div
+            key={p.id}
+            className={`proj-item${active === i ? ' active' : ''}`}
+            onClick={() => setActive(i)}
+          >
+            <span className="proj-item-title">{p.title}</span>
+            <span className="proj-item-meta">{p.tag} · {p.year}</span>
+          </div>
+        ))}
+
+        <span className="sidebar-section-label" style={{ marginTop: 8 }}>EXPERIENCE</span>
+        {EXPERIENCE.map((e, i) => (
+          <div key={i} className="exp-item">
+            <div className="exp-company">{e.company}</div>
+            <div className="exp-role">{e.role}</div>
+            <div className="exp-dates">{e.dates}</div>
+          </div>
+        ))}
+
+        <div className="skills-area">
+          <span className="sidebar-section-label" style={{ padding: '10px 0 8px', display: 'block' }}>SKILLS</span>
+          <div className="skills-grid">
+            {SKILLS.map(s => <span key={s} className="skill-chip">{s}</span>)}
+          </div>
+        </div>
+      </div>
+    </aside>
+  );
+}
+
+/* ── Hero / About panel ── */
+function HeroPanel({ onViewWork }) {
+  return (
+    <div className="panel-content" key="hero">
+      <div className="hero-name">Jiulong<br />Lin</div>
+      <div className="hero-title">{PROFILE.title} · CUPERTINO, CA</div>
+      <p className="hero-bio">{PROFILE.bio}</p>
+      <div className="hero-links">
+        <span className="hero-btn primary" onClick={onViewWork}>view my work →</span>
+        <a className="hero-btn" href={PROFILE.github} target="_blank" rel="noreferrer">github ↗</a>
+        <a className="hero-btn" href={PROFILE.linkedin} target="_blank" rel="noreferrer">linkedin ↗</a>
+        <a className="hero-btn" href={`mailto:${PROFILE.email}`}>email</a>
+      </div>
+
+      <hr className="section-divider" />
+
+      <div className="pd-section-title">EDUCATION</div>
+      <div className="pd-block" style={{ marginBottom: 6 }}>
+        M.S. Engineering Management &nbsp;·&nbsp;
+        <span style={{ color: 'var(--c-text-3)', fontSize: 13 }}>Trine University</span>
+      </div>
+      <div className="pd-block">
+        B.S. Applied Mathematics &amp; Statistics (Minor: CS) &nbsp;·&nbsp;
+        <span style={{ color: 'var(--c-text-3)', fontSize: 13 }}>Stony Brook University</span>
+      </div>
+
+      <hr className="section-divider" />
+
+      <div className="pd-section-title">FULL STACK</div>
+      <div className="stack-row">
+        {SKILLS.map(s => <span key={s} className="stack-chip">{s}</span>)}
+      </div>
+    </div>
+  );
+}
+
+/* ── Project Detail panel ── */
+function ProjectDetail({ project }) {
+  const { title, tagline, tag, year, stack, problem, solution, highlights, links, placeholder } = project;
+  return (
+    <div className="panel-content" key={project.id}>
+      {placeholder && (
+        <div style={{
+          background: '#fffbeb', border: '1.5px dashed #f0c040',
+          borderRadius: 4, padding: '7px 14px', marginBottom: 20,
+          fontFamily: 'Space Mono, monospace', fontSize: 9, color: '#b8860b',
+        }}>
+          ✏ Placeholder content — replace with your real project details
+        </div>
+      )}
+
+      <div className="pd-tag">{tag} · {year}</div>
+      <h1 className="pd-title">{title}</h1>
+      <p className="pd-tagline">{tagline}</p>
+
+      <div className="pd-action-row">
+        {links.demo && <a className="pd-btn filled" href={links.demo} target="_blank" rel="noreferrer">↗ live demo</a>}
+        {links.github && <a className="pd-btn" href={links.github} target="_blank" rel="noreferrer">⌥ github</a>}
+        {links.video && <a className="pd-btn" href={links.video} target="_blank" rel="noreferrer">▶ video</a>}
+      </div>
+
+      <Screenshot label="main screenshot — drag your image here" />
+
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 28, marginBottom: 28 }}>
+        <div>
+          <div className="pd-section-title">THE PROBLEM</div>
+          <p className="pd-block">{problem}</p>
+        </div>
+        <div>
+          <div className="pd-section-title">THE SOLUTION</div>
+          <p className="pd-block">{solution}</p>
+        </div>
+      </div>
+
+      <div style={{ marginBottom: 28 }}>
+        <div className="pd-section-title">HIGHLIGHTS</div>
+        <div className="highlights-list">
+          {highlights.map((h, i) => (
+            <div key={i} className="highlight-item">
+              <div className="highlight-dot"></div>
+              <span className="highlight-text">{h}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div className="thumb-grid">
+        <Thumb label="detail view" />
+        <Thumb label="detail view" />
+        <Thumb label="detail view" />
+      </div>
+
+      <hr className="section-divider" />
+
+      <div className="pd-section-title">TECH STACK</div>
+      <div className="stack-row">
+        {stack.map(s => <span key={s} className="stack-chip">{s}</span>)}
+      </div>
+    </div>
+  );
+}
+
+/* ── Experience full view ── */
+function ExperiencePanel() {
+  return (
+    <div className="panel-content" key="exp">
+      <div className="pd-tag">5 YEARS · WALMART &amp; SAM'S CLUB</div>
+      <h1 className="pd-title">Experience</h1>
+      <hr className="section-divider" style={{ marginTop: 20 }} />
+      {EXPERIENCE.map((e, i) => (
+        <div key={i} className="exp-full-item">
+          <div>
+            <div className="exp-full-company">{e.company}</div>
+            <div className="exp-full-role">{e.role}</div>
+            <div className="exp-full-tags">
+              {e.tags.map(t => <span key={t} className="exp-full-tag">{t}</span>)}
+            </div>
+          </div>
+          <div className="exp-full-dates">{e.dates}</div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+/* ──────────────────────────────────────────────────
+   TWEAKS
+────────────────────────────────────────────────── */
+
+const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
+  "accent": "#c96a00",
+  "dark": false
+}/*EDITMODE-END*/;
+
+/* ──────────────────────────────────────────────────
+   MAIN APP
+────────────────────────────────────────────────── */
+
+function App() {
+  const [active, setActive] = React.useState(null); // null = hero/about
+  const [t, setTweak] = useTweaks(TWEAK_DEFAULTS);
+
+  // Apply tweaks to CSS vars
+  React.useEffect(() => {
+    const root = document.documentElement;
+    if (t.dark) {
+      root.style.setProperty('--c-bg', '#141414');
+      root.style.setProperty('--c-surface', '#1e1e1e');
+      root.style.setProperty('--c-border', '#2a2a2a');
+      root.style.setProperty('--c-text', '#eeeeee');
+      root.style.setProperty('--c-text-2', '#999999');
+      root.style.setProperty('--c-text-3', '#555555');
+      root.style.setProperty('--c-accent-dim', '#0d2a20');
+    } else {
+      root.style.setProperty('--c-bg', '#f7f6f2');
+      root.style.setProperty('--c-surface', '#ffffff');
+      root.style.setProperty('--c-border', '#e6e5e1');
+      root.style.setProperty('--c-text', '#111111');
+      root.style.setProperty('--c-text-2', '#666666');
+      root.style.setProperty('--c-text-3', '#aaaaaa');
+      root.style.setProperty('--c-accent-dim', '#e4f0eb');
+    }
+    root.style.setProperty('--c-accent', t.accent);
+    root.style.setProperty('--c-accent-text', t.accent);
+  }, [t.dark, t.accent]);
+
+  const handleViewWork = () => setActive(0);
+
+  return (
+    <>
+      <Nav onAbout={() => setActive(null)} />
+      <div className="layout">
+        <Sidebar active={active} setActive={setActive} />
+        <main className="panel">
+          {active === null
+            ? <HeroPanel onViewWork={handleViewWork} />
+            : <ProjectDetail project={PROJECTS[active]} />
+          }
+        </main>
+      </div>
+
+      <TweaksPanel>
+        <TweakSection label="Theme">
+          <TweakToggle
+            label="Dark mode"
+            value={t.dark}
+            onChange={v => setTweak('dark', v)}
+          />
+          <TweakColor
+            label="Accent color"
+            value={t.accent}
+            options={['#0d6b4c', '#1a5fb4', '#9b2226', '#6e3d8e', '#c96a00']}
+            onChange={v => setTweak('accent', v)}
+          />
+        </TweakSection>
+      </TweaksPanel>
+    </>
+  );
+}
+
+const root = ReactDOM.createRoot(document.getElementById('root'));
+root.render(<App />);
+</script>
+</body>
+</html>

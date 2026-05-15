@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ePortfolio Wireframes — Jiulong Lin</title>
+  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;600;700&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+  <script type="text/babel" src="design-canvas.jsx"></script>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: #e8e5e0; }
+  </style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+
+const { DCSection, DCArtboard, DesignCanvas } = window;
+
+/* ─── data ─── */
+const JOBS = [
+  { company: 'Walmart — Compass', role: 'Frontend / Full-Stack', dates: '2025–now' },
+  { company: "Sam's Club — Ad Center", role: 'Frontend / Full-Stack', dates: '2024–2025' },
+  { company: "Sam's Club — AdPal", role: 'Frontend / Full-Stack', dates: '2023–2024' },
+  { company: "Sam's Club — Opus CMS", role: 'Frontend Engineer', dates: '2022–2023' },
+  { company: 'Walmart — Global Exp.', role: 'Frontend Engineer', dates: '2021–2022' },
+];
+const SKILLS = ['React 18','TypeScript','GraphQL','Node.js','Python','Django','PostgreSQL','TanStack Query','Apollo','Playwright','Tailwind CSS'];
+const PROJECTS = [
+  { title: 'Project One', stack: 'React · Node · PostgreSQL', tag: 'Full-stack' },
+  { title: 'Project Two', stack: 'Next.js · Python · AWS', tag: 'Backend-heavy' },
+  { title: 'Project Three', stack: 'TypeScript · GraphQL', tag: 'Frontend' },
+];
+
+/* ─── helpers ─── */
+const Mono = ({ children, size = 9, color = '#666', bold }) => (
+  <span style={{ fontFamily: 'Space Mono, monospace', fontSize: size, color, fontWeight: bold ? 700 : 400 }}>{children}</span>
+);
+const Hand = ({ children, size = 13, color = '#555' }) => (
+  <span style={{ fontFamily: 'Caveat, cursive', fontSize: size, color }}>{children}</span>
+);
+const Img = ({ h = 80, label = 'screenshot', radius = 3 }) => (
+  <div style={{ width: '100%', height: h, background: '#e4e4e4', border: '2px dashed #c8c8c8', borderRadius: radius, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+    <Mono size={8} color="#bbb">{label}</Mono>
+  </div>
+);
+const ImgDark = ({ h = 80, label = 'screenshot' }) => (
+  <div style={{ width: '100%', height: h, background: '#2a2a2a', border: '2px dashed #3a3a3a', borderRadius: 3, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+    <Mono size={8} color="#555">{label}</Mono>
+  </div>
+);
+const Chip = ({ label, dark, accent }) => (
+  <span style={{ fontFamily: 'Space Mono, monospace', fontSize: 7, color: accent ? '#fff' : dark ? '#888' : '#777', background: accent ? '#3a3a3a' : dark ? '#1e1e1e' : '#efefef', border: `1px solid ${dark ? '#333' : '#ddd'}`, padding: '2px 6px', borderRadius: 2 }}>{label}</span>
+);
+const Btn = ({ label, dark, filled }) => (
+  <span style={{ fontFamily: 'Space Mono, monospace', fontSize: 8, color: filled ? (dark ? '#111' : '#fff') : dark ? '#4ec9b0' : '#333', background: filled ? (dark ? '#4ec9b0' : '#222') : 'transparent', border: `1.5px solid ${dark ? '#4ec9b0' : '#333'}`, padding: '3px 8px', borderRadius: 2, cursor: 'pointer' }}>{label}</span>
+);
+
+/* ════════════════════════════════════════════════
+   A — PROJECTS FIRST: Big cards, scroll to explore
+   Philosophy: Lead with work. Experience is a footnote.
+════════════════════════════════════════════════ */
+const LayoutA = () => (
+  <div style={{ background: '#fff', width: '100%', height: '100%', display: 'flex', flexDirection: 'column', overflow: 'hidden', fontFamily: 'Space Mono' }}>
+    {/* Nav — minimal */}
+    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '8px 16px', borderBottom: '1.5px solid #111', flexShrink: 0 }}>
+      <Mono size={10} bold color="#111">JL</Mono>
+      <div style={{ display: 'flex', gap: 14 }}>
+        {['work','about','contact'].map(n => <Mono key={n} size={8} color="#aaa">{n}</Mono>)}
+      </div>
+    </div>
+
+    <div style={{ flex: 1, overflowY: 'auto', padding: '16px' }}>
+      {/* Hero — brief */}
+      <div style={{ marginBottom: 16, paddingBottom: 14, borderBottom: '1px dashed #eee' }}>
+        <div style={{ fontFamily: 'Caveat', fontSize: 36, fontWeight: 700, lineHeight: 1, color: '#111' }}>Jiulong Lin</div>
+        <Mono size={8} color="#bbb">Senior Frontend-Focused Full-Stack · Cupertino CA · Open to work</Mono>
+        <div style={{ marginTop: 6, maxWidth: 320 }}>
+          <Hand size={12} color="#888">Building real-time, data-intensive web apps. 5 yrs at Walmart &amp; Sam's Club.</Hand>
+        </div>
+        <div style={{ display: 'flex', gap: 6, marginTop: 8 }}>
+          <Btn label="↓ resume" /><Btn label="github ↗" /><Btn label="linkedin ↗" />
+        </div>
+      </div>
+
+      {/* ── SELECTED WORK (primary section) ── */}
+      <Mono size={8} color="#bbb" bold>SELECTED WORK</Mono>
+      <div style={{ height: 1, background: '#eee', margin: '6px 0 12px' }} />
+
+      {/* Featured large card */}
+      <div style={{ border: '1.5px solid #111', borderRadius: 4, marginBottom: 12, overflow: 'hidden' }}>
+        <Img h={100} label="project screenshot / demo gif" radius={0} />
+        <div style={{ padding: '10px 12px' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
+            <Hand size={18} color="#111">Project One</Hand>
+            <Chip label="Full-stack" />
+          </div>
+          <Hand size={11} color="#888">What this does — the problem it solves and the impact it had. One or two sentences.</Hand>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4, margin: '6px 0' }}>
+            {['React','Node','PostgreSQL'].map(t => <Chip key={t} label={t} />)}
+          </div>
+          <div style={{ display: 'flex', gap: 6 }}>
+            <Btn label="↗ live demo" filled /><Btn label="⌥ github" /><Btn label="▶ video" />
+          </div>
+        </div>
+      </div>
+
+      {/* Two smaller cards side by side */}
+      <div style={{ display: 'flex', gap: 10, marginBottom: 16 }}>
+        {PROJECTS.slice(1).map(p => (
+          <div key={p.title} style={{ flex: 1, border: '1.5px dashed #ddd', borderRadius: 4, overflow: 'hidden' }}>
+            <Img h={64} label="screenshot" radius={0} />
+            <div style={{ padding: '8px' }}>
+              <Hand size={14} color="#222">{p.title}</Hand>
+              <div style={{ marginTop: 2 }}><Hand size={10} color="#aaa">Description of project...</Hand></div>
+              <div style={{ display: 'flex', gap: 4, marginTop: 6 }}>
+                <Btn label="demo ↗" /><Btn label="github" />
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* ── EXPERIENCE (condensed, secondary) ── */}
+      <Mono size={8} color="#bbb" bold>EXPERIENCE</Mono>
+      <div style={{ height: 1, background: '#eee', margin: '6px 0 8px' }} />
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
+        {JOBS.map((j, i) => (
+          <div key={i} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', padding: '4px 0', borderBottom: '1px dashed #f0f0f0' }}>
+            <div>
+              <Mono size={8} color="#333" bold>{j.company}</Mono>
+              <span style={{ color: '#ccc', margin: '0 5px' }}>·</span>
+              <Hand size={11} color="#999">{j.role}</Hand>
+            </div>
+            <Mono size={7} color="#ccc">{j.dates}</Mono>
+          </div>
+        ))}
+      </div>
+
+      {/* Skills inline */}
+      <div style={{ marginTop: 12, display: 'flex', flexWrap: 'wrap', gap: 4 }}>
+        {SKILLS.map(sk => <Chip key={sk} label={sk} />)}
+      </div>
+    </div>
+  </div>
+);
+
+/* ════════════════════════════════════════════════
+   B — FULL-SCREEN PROJECT CHAPTERS (dark)
+   Philosophy: Each project owns a full viewport section.
+   Scroll feels like flipping through case studies.
+════════════════════════════════════════════════ */
+const LayoutB = () => (
+  <div style={{ background: '#141414', width: '100%', height: '100%', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+    {/* Nav */}
+    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '8px 16px', borderBottom: '1px solid #222', flexShrink: 0 }}>
+      <Mono size={9} bold color="#ddd">Jiulong Lin</Mono>
+      <div style={{ display: 'flex', gap: 12 }}>
+        {['work','about','contact'].map(n => <Mono key={n} size={8} color="#555">{n}</Mono>)}
+      </div>
+    </div>
+
+    <div style={{ flex: 1, overflowY: 'auto' }}>
+      {/* Hero — full-width dark */}
+      <div style={{ padding: '20px 18px 16px', borderBottom: '1px solid #1e1e1e' }}>
+        <Mono size={7} color="#4ec9b0">SENIOR FRONTEND-FOCUSED FULL-STACK ENGINEER</Mono>
+        <div style={{ fontFamily: 'Caveat', fontSize: 38, fontWeight: 700, color: '#fff', lineHeight: 1, margin: '6px 0' }}>Jiulong Lin</div>
+        <Hand size={12} color="#666">5 yrs · Walmart &amp; Sam's Club · Real-time systems · Open to work</Hand>
+        <div style={{ display: 'flex', gap: 6, marginTop: 10 }}>
+          <Btn label="view work ↓" dark filled /><Btn label="github ↗" dark /><Btn label="resume" dark />
+        </div>
+      </div>
+
+      {/* Project Chapter 1 — big feature */}
+      <div style={{ borderBottom: '1px solid #1e1e1e', padding: '14px 18px' }}>
+        <Mono size={7} color="#333">01 / SELECTED WORK</Mono>
+        <div style={{ margin: '8px 0' }}><ImgDark h={110} label="project screenshot or demo preview" /></div>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+          <div style={{ flex: 1 }}>
+            <div style={{ fontFamily: 'Caveat', fontSize: 22, color: '#fff' }}>Project One</div>
+            <Hand size={11} color="#666">The problem it solves, what makes it technically interesting, and the outcome.</Hand>
+            <div style={{ display: 'flex', gap: 4, marginTop: 6, flexWrap: 'wrap' }}>
+              {['React','Node','PostgreSQL','WebSocket'].map(t => <Chip key={t} label={t} dark />)}
+            </div>
+          </div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 4, marginLeft: 10, flexShrink: 0 }}>
+            <Btn label="↗ demo" dark filled />
+            <Btn label="⌥ github" dark />
+            <Btn label="▶ video" dark />
+          </div>
+        </div>
+      </div>
+
+      {/* Project Chapter 2 — smaller */}
+      <div style={{ borderBottom: '1px solid #1e1e1e', padding: '12px 18px' }}>
+        <Mono size={7} color="#333">02</Mono>
+        <div style={{ display: 'flex', gap: 10, marginTop: 6 }}>
+          <ImgDark h={68} label="screenshot" />
+          <div style={{ flex: 1 }}>
+            <div style={{ fontFamily: 'Caveat', fontSize: 18, color: '#ddd' }}>Project Two</div>
+            <Hand size={11} color="#666">Short description of what this does.</Hand>
+            <div style={{ display: 'flex', gap: 4, marginTop: 4 }}><Btn label="demo ↗" dark /><Btn label="github" dark /></div>
+          </div>
+        </div>
+      </div>
+
+      {/* Project Chapter 3 */}
+      <div style={{ borderBottom: '1px solid #1e1e1e', padding: '12px 18px' }}>
+        <Mono size={7} color="#333">03</Mono>
+        <div style={{ display: 'flex', gap: 10, marginTop: 6 }}>
+          <ImgDark h={68} label="screenshot" />
+          <div style={{ flex: 1 }}>
+            <div style={{ fontFamily: 'Caveat', fontSize: 18, color: '#ddd' }}>Project Three</div>
+            <Hand size={11} color="#666">Short description of what this does.</Hand>
+            <div style={{ display: 'flex', gap: 4, marginTop: 4 }}><Btn label="demo ↗" dark /><Btn label="github" dark /></div>
+          </div>
+        </div>
+      </div>
+
+      {/* Experience — condensed strip */}
+      <div style={{ padding: '12px 18px', borderBottom: '1px solid #1e1e1e' }}>
+        <Mono size={7} color="#333" bold>WHERE I'VE WORKED</Mono>
+        <div style={{ marginTop: 8, display: 'flex', flexDirection: 'column', gap: 4 }}>
+          {JOBS.map((j, i) => (
+            <div key={i} style={{ display: 'flex', justifyContent: 'space-between' }}>
+              <Mono size={8} color="#555">{j.company}</Mono>
+              <Mono size={7} color="#333">{j.dates}</Mono>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Skills + Contact */}
+      <div style={{ padding: '12px 18px' }}>
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4, marginBottom: 10 }}>
+          {SKILLS.slice(0,8).map(sk => <Chip key={sk} label={sk} dark />)}
+        </div>
+        <Mono size={8} color="#333">longgangsima@gmail.com · github · linkedin</Mono>
+      </div>
+    </div>
+  </div>
+);
+
+/* ════════════════════════════════════════════════
+   C — INTERACTIVE PROJECT BROWSER
+   Philosophy: Left = project list. Right = live preview/detail.
+   Click a project to see full writeup + screenshots.
+════════════════════════════════════════════════ */
+const LayoutC = () => {
+  const [active, setActive] = React.useState(0);
+  const proj = PROJECTS[active];
+
+  return (
+    <div style={{ background: '#fafafa', width: '100%', height: '100%', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+      {/* Top nav */}
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '7px 14px', borderBottom: '1.5px solid #111', flexShrink: 0 }}>
+        <div>
+          <Mono size={10} bold color="#111">Jiulong Lin</Mono>
+          <Mono size={7} color="#bbb"> · Senior Full-Stack Engineer</Mono>
+        </div>
+        <div style={{ display: 'flex', gap: 10 }}>
+          {['about','contact','resume'].map(n => <Mono key={n} size={8} color="#aaa">{n}</Mono>)}
+        </div>
+      </div>
+
+      {/* Main split */}
+      <div style={{ flex: 1, display: 'flex', overflow: 'hidden' }}>
+
+        {/* Left panel — project list */}
+        <div style={{ width: 160, borderRight: '1.5px solid #e8e8e8', display: 'flex', flexDirection: 'column', flexShrink: 0 }}>
+          <div style={{ padding: '10px 10px 6px' }}>
+            <Mono size={7} color="#bbb" bold>PROJECTS</Mono>
+          </div>
+          {PROJECTS.map((p, i) => (
+            <div key={i} onClick={() => setActive(i)} style={{
+              padding: '8px 10px', cursor: 'pointer',
+              background: active === i ? '#f0f0f0' : 'transparent',
+              borderLeft: `3px solid ${active === i ? '#111' : 'transparent'}`,
+              borderBottom: '1px solid #f0f0f0',
+            }}>
+              <Mono size={8} color={active === i ? '#111' : '#999'} bold>{p.title}</Mono>
+              <div style={{ marginTop: 2 }}><Chip label={p.tag} /></div>
+            </div>
+          ))}
+
+          {/* Experience below project list */}
+          <div style={{ padding: '10px 10px 6px', marginTop: 8, borderTop: '1px dashed #eee' }}>
+            <Mono size={7} color="#ccc" bold>EXPERIENCE</Mono>
+          </div>
+          {JOBS.map((j, i) => (
+            <div key={i} style={{ padding: '4px 10px', borderBottom: '1px solid #f5f5f5' }}>
+              <Mono size={7} color="#bbb">{j.company}</Mono>
+              <Mono size={6} color="#ddd"> · {j.dates}</Mono>
+            </div>
+          ))}
+        </div>
+
+        {/* Right panel — project detail */}
+        <div style={{ flex: 1, overflowY: 'auto', padding: '16px 16px' }}>
+          {/* Project title */}
+          <div style={{ marginBottom: 10 }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
+              <div style={{ fontFamily: 'Caveat', fontSize: 26, fontWeight: 700, color: '#111' }}>{proj.title}</div>
+              <Chip label={proj.tag} />
+            </div>
+            <Mono size={8} color="#ccc">{proj.stack}</Mono>
+          </div>
+
+          {/* Main screenshot */}
+          <Img h={120} label="main screenshot / demo gif" />
+
+          {/* Description block */}
+          <div style={{ margin: '10px 0' }}>
+            <Hand size={13} color="#555">
+              What this project does — the problem it solves, what you built, and why it matters. This is the "story" of the project, not a bullet list.
+            </Hand>
+          </div>
+
+          {/* Secondary images */}
+          <div style={{ display: 'flex', gap: 8, marginBottom: 10 }}>
+            <Img h={60} label="detail view" />
+            <Img h={60} label="detail view" />
+          </div>
+
+          {/* Highlights */}
+          <div style={{ background: '#f5f5f5', borderRadius: 3, padding: '8px 10px', marginBottom: 10 }}>
+            <Mono size={7} color="#aaa" bold>HIGHLIGHTS</Mono>
+            <div style={{ marginTop: 4, display: 'flex', flexDirection: 'column', gap: 3 }}>
+              {['Key technical decision or achievement', 'Metric or impact (e.g. cut API traffic ~80%)', 'An interesting problem you solved'].map(h => (
+                <div key={h} style={{ display: 'flex', gap: 5 }}>
+                  <Mono size={8} color="#ccc">·</Mono>
+                  <Hand size={11} color="#777">{h}</Hand>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Stack + links */}
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4, marginBottom: 10 }}>
+            {proj.stack.split(' · ').map(t => <Chip key={t} label={t} />)}
+          </div>
+          <div style={{ display: 'flex', gap: 6 }}>
+            <Btn label="↗ live demo" filled /><Btn label="⌥ github" /><Btn label="▶ video" />
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+/* ─── root ─── */
+function App() {
+  return (
+    <DesignCanvas title="Jiulong Lin — ePortfolio Wireframes (v2)">
+      <DCSection id="s1" title="Portfolio-first layouts (projects lead, experience supports)">
+        <DCArtboard id="a" label="A — Projects First, Clean Light" width={420} height={820}>
+          <LayoutA />
+        </DCArtboard>
+        <DCArtboard id="b" label="B — Full-screen Chapters, Dark" width={420} height={820}>
+          <LayoutB />
+        </DCArtboard>
+        <DCArtboard id="c" label="C — Interactive Browser (click projects!)" width={500} height={820}>
+          <LayoutC />
+        </DCArtboard>
+      </DCSection>
+    </DesignCanvas>
+  );
+}
+
+const root = ReactDOM.createRoot(document.getElementById('root'));
+root.render(<App />);
+</script>
+</body>
+</html>
