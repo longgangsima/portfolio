@@ -12,7 +12,7 @@ export function Nav() {
           projects
         </a>
         <a href="#game" className="nav-a">
-          play ↯
+          playground
         </a>
         <a href="#contact" className="nav-a">
           contact

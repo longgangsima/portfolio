@@ -7,7 +7,7 @@ export function Projects() {
   return (
     <section className="sec" id="projects">
       <div className="ctr fade-up" ref={ref}>
-        <div className="sec-tag">PERSONAL WORK</div>
+        <div className="sec-tag">Personal work</div>
         <h2 className="sec-h">Things I&apos;ve built</h2>
         {PROJECTS.map((p) => (
           <div key={p.n} className="pj-item">

@@ -16,15 +16,15 @@ export function Hero() {
       <div className="hero-blob" />
       <div className="hero-blob2" />
       <div className="hero-l">
-        <div className="eyebrow">FRONTEND-FOCUSED FULL-STACK ENGINEER</div>
+        <div className="eyebrow">Frontend-focused full-stack engineer</div>
         <h1 className="hero-name">
           Jiulong
           <br />
           <em>Lin.</em>
         </h1>
         <p className="hero-bio">
-          5 years building real-time, data-intensive web applications at Walmart and Sam&apos;s Club. React,
-          TypeScript, GraphQL — and systems that actually hold up under load.
+          Real-time, data-heavy web apps at Walmart and Sam&apos;s Club — React, TypeScript, GraphQL, and systems
+          that hold up under load.
         </p>
         <div className="hero-btns">
           <a href="#projects" className="btn-p">

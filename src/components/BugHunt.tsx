@@ -95,7 +95,7 @@ export function BugHunt() {
     <section className="game-sec blue-tint sec" id="game">
       <div className="fade-up ctr" style={{ textAlign: 'center' }} ref={ref}>
         <div className="sec-tag" style={{ marginBottom: 8 }}>
-          MINI GAME
+          Mini game
         </div>
         <h2 className="sec-h" style={{ marginBottom: 12 }}>
           Meanwhile, in production…
