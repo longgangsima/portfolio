@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { prefersReducedMotion } from '../lib/motionPreference';
 
 type LineKind = 'cmd' | 'name' | 'dim' | 'blank' | 'ok' | 'stat';
 
@@ -7,13 +8,13 @@ type TemplateLine = { id: number; text: string; t: LineKind };
 const TL: TemplateLine[] = [
   { id: 0, text: '> whoami', t: 'cmd' },
   { id: 1, text: 'Jiulong Lin', t: 'name' },
-  { id: 2, text: 'Senior Frontend-Focused Full-Stack Engineer', t: 'dim' },
+  { id: 2, text: "Frontend-focused full-stack · Walmart & Sam's Club", t: 'dim' },
   { id: 3, text: '', t: 'blank' },
-  { id: 4, text: '> cat achievements.txt', t: 'cmd' },
-  { id: 5, text: '✓ compass-validator → 9,000+ stores validated in CI', t: 'ok' },
-  { id: 6, text: '✓ REST→GraphQL migration → ~80% API traffic cut', t: 'ok' },
-  { id: 7, text: '✓ WebSocket reliability 60% → 99%', t: 'ok' },
-  { id: 8, text: '✓ Eliminated ~22,000 over-fetched fields', t: 'ok' },
+  { id: 4, text: '> cat stack.txt', t: 'cmd' },
+  { id: 5, text: 'React · TypeScript · GraphQL · Node · Playwright · Kafka', t: 'dim' },
+  { id: 6, text: '', t: 'blank' },
+  { id: 7, text: '> open highlights.pdf', t: 'cmd' },
+  { id: 8, text: '→ see stats band below for shipped metrics', t: 'dim' },
   { id: 9, text: '', t: 'blank' },
   { id: 10, text: '> ./status.sh', t: 'cmd' },
   { id: 11, text: '● open to opportunities · cupertino, ca', t: 'stat' },
@@ -21,11 +22,16 @@ const TL: TemplateLine[] = [
 
 export type TypistRow = TemplateLine & { text: string };
 
+function fullTypistRows(): TypistRow[] {
+  return TL.map((line) => ({ ...line, text: line.text }));
+}
+
 export function useTypist() {
-  const [li, setLi] = useState(0);
+  const reduced = prefersReducedMotion();
+  const [li, setLi] = useState(reduced ? TL.length : 0);
   const [ci, setCi] = useState(0);
-  const [rows, setRows] = useState<TypistRow[]>([]);
-  const [done, setDone] = useState(false);
+  const [rows, setRows] = useState<TypistRow[]>(() => (reduced ? fullTypistRows() : []));
+  const [done, setDone] = useState(reduced);
 
   useEffect(() => {
     if (done) return;

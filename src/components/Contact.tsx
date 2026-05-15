@@ -7,7 +7,7 @@ export function Contact() {
     <section className="ct" id="contact">
       <div className="fade-up" ref={ref}>
         <div className="sec-tag" style={{ marginBottom: 16 }}>
-          GET IN TOUCH
+          Get in touch
         </div>
         <a href="mailto:longgangsima@gmail.com" className="ct-em">
           longgangsima@gmail.com

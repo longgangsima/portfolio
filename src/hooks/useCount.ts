@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState, type MutableRefObject } from 'react';
+import { prefersReducedMotion } from '../lib/motionPreference';
 
 export function useCount(end: number, dur = 1400): [number, MutableRefObject<HTMLDivElement | null>] {
   const [v, setV] = useState(0);
@@ -10,6 +11,10 @@ export function useCount(end: number, dur = 1400): [number, MutableRefObject<HTM
       ([e]) => {
         if (e.isIntersecting && !started.current) {
           started.current = true;
+          if (prefersReducedMotion()) {
+            setV(end);
+            return;
+          }
           const t0 = performance.now();
           const tick = (t: number) => {
             const p = Math.min((t - t0) / dur, 1);
